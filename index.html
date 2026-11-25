@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Muxlisa — Kiyim-kechak do'koni boshqaruv tizimi</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👗</text></svg>">
+</head>
+<body>
+
+  <!-- ============================================================
+       LOGIN PAGE
+       ============================================================ -->
+  <div class="login-wrapper" id="loginPage">
+    <div class="login-card">
+      <div class="logo">
+        <span>👗</span>
+        <h1>Muxlisa</h1>
+        <p>Kiyim-kechak do'koni boshqaruv tizimi</p>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label>📧 Elektron pochta</label>
+          <input type="email" id="loginEmail" placeholder="pochta@store.uz" required>
+        </div>
+        <div class="form-group">
+          <label>🔒 Parol</label>
+          <input type="password" id="loginPassword" placeholder="Parolingizni kiriting" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-login">🚀 Tizimga kirish</button>
+        <p class="login-error" id="loginError">❌ Noto'g'ri pochta yoki parol!</p>
+      </form>
+
+      <div class="demo-section">
+        <h3>⚡ Demo hisoblar</h3>
+        <button class="demo-btn" onclick="fillDemo('admin@store.uz','admin123')">
+          <strong>👨‍💼 Administrator</strong><br>
+          <span class="demo-role">admin@store.uz · admin123</span>
+        </button>
+        <button class="demo-btn" onclick="fillDemo('seller@store.uz','seller123')">
+          <strong>🛒 Sotuvchi-kassir</strong><br>
+          <span class="demo-role">seller@store.uz · seller123</span>
+        </button>
+        <button class="demo-btn" onclick="fillDemo('stock@store.uz','stock123')">
+          <strong>📦 Omborchi</strong><br>
+          <span class="demo-role">stock@store.uz · stock123</span>
+        </button>
+      </div>
+
+      <div class="login-footer">© 2026 · Muxlisa · Kiyim-kechak do'koni boshqaruv tizimi</div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MAIN APP
+       ============================================================ -->
+  <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()">☰</button>
+
+  <div class="app-wrapper" id="appWrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <h2><span>👗</span> Muxlisa</h2>
+        <p>Kiyim-kechak do'koni boshqaruv tizimi</p>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
+          <span class="nav-icon">📊</span> Boshqaruv paneli
+        </div>
+        <div class="nav-item" data-page="products" onclick="navigateTo('products')">
+          <span class="nav-icon">👕</span> Mahsulotlar va Ombor
+        </div>
+        <div class="nav-item" data-page="sales" onclick="navigateTo('sales')">
+          <span class="nav-icon">🛒</span> Sotuvlar (Kassa)
+        </div>
+        <div class="nav-item" data-page="history" onclick="navigateTo('history')">
+          <span class="nav-icon">📋</span> Sotuvlar tarixi
+        </div>
+        <div class="nav-item" data-page="reports" onclick="navigateTo('reports')">
+          <span class="nav-icon">📈</span> Hisobotlar
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">A</div>
+          <div>
+            <div class="user-name" id="userName">Admin</div>
+            <div class="user-role" id="userRole">Administrator</div>
+          </div>
+        </div>
+        <button class="logout-btn" onclick="logout()">🚪 Chiqish</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- ==================== DASHBOARD ==================== -->
+      <section class="page-section active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <h1>📊 Boshqaruv paneli</h1>
+            <span class="breadcrumb">Asosiy / Boshqaruv paneli</span>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card purple">
+            <div class="stat-icon">👕</div>
+            <div class="stat-info">
+              <h3 id="statTotalProducts">0</h3>
+              <p>Jami mahsulot turlari</p>
+            </div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon">📦</div>
+            <div class="stat-info">
+              <h3 id="statTotalStock">0</h3>
+              <p>Ombordagi umumiy soni</p>
+            </div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info">
+              <h3 id="statTodaySales">0</h3>
+              <p>Bugungi sotuvlar (so'm)</p>
+            </div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-info">
+              <h3 id="statLowStock">0</h3>
+              <p>Kam qolgan tovarlar</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Low stock alerts -->
+        <div class="table-wrapper" id="lowStockAlerts" style="display:none;">
+          <div class="table-header">
+            <h2>⚠️ Kam qolgan tovarlar (5 va undan kam)</h2>
+          </div>
+          <div class="alert-list" id="alertList"></div>
+        </div>
+      </section>
+
+      <!-- ==================== PRODUCTS ==================== -->
+      <section class="page-section" id="page-products">
+        <div class="page-header">
+          <div>
+            <h1>👕 Mahsulotlar va Ombor qoldig'i</h1>
+            <span class="breadcrumb">Asosiy / Mahsulotlar</span>
+          </div>
+          <button class="btn btn-primary" onclick="openProductModal()">➕ Yangi mahsulot</button>
+        </div>
+
+        <div class="table-wrapper">
+          <div class="table-header">
+            <div class="filter-group">
+              <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="productSearch" placeholder="Nomi bo'yicha qidirish..." oninput="renderProducts()">
+              </div>
+              <select id="filterCategory" onchange="renderProducts()">
+                <option value="">Barcha kategoriyalar</option>
+                <option value="erkaklar">Erkaklar</option>
+                <option value="ayollar">Ayollar</option>
+                <option value="bolalar">Bolalar</option>
+              </select>
+              <select id="filterSize" onchange="renderProducts()">
+                <option value="">Barcha o'lchamlar</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
+              </select>
+              <select id="filterColor" onchange="renderProducts()">
+                <option value="">Barcha ranglar</option>
+              </select>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nomi</th>
+                <th>Kategoriya</th>
+                <th>O'lcham</th>
+                <th>Rang</th>
+                <th>Narxi (so'm)</th>
+                <th>Omborda</th>
+                <th>Amallar</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== SALES (KASSA) ==================== -->
+      <section class="page-section" id="page-sales">
+        <div class="page-header">
+          <div>
+            <h1>🛒 Sotuvlar (Kassa)</h1>
+            <span class="breadcrumb">Asosiy / Kassa</span>
+          </div>
+        </div>
+
+        <div class="sale-layout">
+          <div class="sale-products">
+            <div class="filter-group">
+              <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="saleSearch" placeholder="Mahsulot qidirish..." oninput="renderSaleProducts()">
+              </div>
+              <select id="saleCatFilter" onchange="renderSaleProducts()">
+                <option value="">Barchasi</option>
+                <option value="erkaklar">Erkaklar</option>
+                <option value="ayollar">Ayollar</option>
+                <option value="bolalar">Bolalar</option>
+              </select>
+            </div>
+            <div class="sale-product-grid" id="saleProductGrid"></div>
+          </div>
+
+          <div class="sale-cart">
+            <div class="cart-header">🛍️ Savat</div>
+            <div class="cart-items" id="cartItems">
+              <div class="empty-cart">
+                <div class="empty-icon">🛒</div>
+                <p>Savat bo'sh</p>
+                <p style="font-size:0.75rem; margin-top:0.3rem;">Mahsulotni bosib savatga qo'shing</p>
+              </div>
+            </div>
+            <div class="cart-footer">
+              <div class="cart-total">
+                <span>Jami:</span>
+                <span id="cartTotal">0 so'm</span>
+              </div>
+              <button class="btn btn-success btn-block" onclick="completeSale()">✅ Sotuvni yakunlash</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SALES HISTORY ==================== -->
+      <section class="page-section" id="page-history">
+        <div class="page-header">
+          <div>
+            <h1>📋 Sotuvlar tarixi</h1>
+            <span class="breadcrumb">Asosiy / Sotuvlar tarixi</span>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <div class="table-header">
+            <h2>📋 Oxirgi sotuvlar</h2>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Sana va vaqt</th>
+                <th>Mahsulot</th>
+                <th>O'lcham / Rang</th>
+                <th>Soni</th>
+                <th>Jami (so'm)</th>
+                <th>Sotuvchi</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== REPORTS ==================== -->
+      <section class="page-section" id="page-reports">
+        <div class="page-header">
+          <div>
+            <h1>📈 Hisobotlar</h1>
+            <span class="breadcrumb">Asosiy / Hisobotlar</span>
+          </div>
+        </div>
+
+        <div class="stats-grid" style="margin-bottom: 1.5rem;">
+          <div class="stat-card purple">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info">
+              <h3 id="reportTotalRevenue">0</h3>
+              <p>Umumiy tushum (so'm)</p>
+            </div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon">🧾</div>
+            <div class="stat-info">
+              <h3 id="reportTotalSalesCount">0</h3>
+              <p>Jami sotuvlar soni</p>
+            </div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-icon">📊</div>
+            <div class="stat-info">
+              <h3 id="reportAvgSale">0</h3>
+              <p>O'rtacha sotuv summasi</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="reports-grid">
+          <div class="report-card">
+            <h3>🏆 Eng ko'p sotilgan kiyimlar</h3>
+            <ul class="report-list" id="topProductsList"></ul>
+          </div>
+          <div class="report-card">
+            <h3>📦 Ombor holati</h3>
+            <ul class="report-list" id="stockStatusList"></ul>
+          </div>
+          <div class="report-card">
+            <h3>📊 Kategoriya bo'yicha sotuvlar</h3>
+            <ul class="report-list" id="categorySalesList"></ul>
+          </div>
+        </div>
+      </section>
+
+      <footer class="app-footer">© 2026 · Muxlisa · Kiyim-kechak do'koni boshqaruv tizimi</footer>
+    </main>
+  </div>
+
+  <!-- ============================================================
+       PRODUCT MODAL
+       ============================================================ -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="productModalTitle">➕ Yangi mahsulot qo'shish</h2>
+        <button class="modal-close" onclick="closeProductModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="productForm">
+          <input type="hidden" id="editProductId">
+          <div class="form-group">
+            <label>👕 Mahsulot nomi</label>
+            <input type="text" id="pName" placeholder="Masalan: Erkaklar ko'ylagi" required>
+          </div>
+          <div class="form-group">
+            <label>📂 Kategoriya</label>
+            <select id="pCategory" required>
+              <option value="">Tanlang...</option>
+              <option value="erkaklar">👨 Erkaklar</option>
+              <option value="ayollar">👩 Ayollar</option>
+              <option value="bolalar">👶 Bolalar</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>📏 O'lcham</label>
+            <select id="pSize" required>
+              <option value="">Tanlang...</option>
+              <option value="S">S</option>
+              <option value="M">M</option>
+              <option value="L">L</option>
+              <option value="XL">XL</option>
+              <option value="XXL">XXL</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>🎨 Rang</label>
+            <input type="text" id="pColor" placeholder="Masalan: Qora, Oq, Ko'k" required>
+          </div>
+          <div class="form-group">
+            <label>💰 Narxi (so'm)</label>
+            <input type="number" id="pPrice" placeholder="150000" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>📦 Ombordagi soni</label>
+            <input type="number" id="pStock" placeholder="50" min="0" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeProductModal()">Bekor qilish</button>
+        <button class="btn btn-primary" onclick="saveProduct()">💾 Saqlash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sale item modal -->
+  <div class="modal-overlay" id="saleModal">
+    <div class="modal" style="max-width:400px;">
+      <div class="modal-header">
+        <h2>🛒 Savatga qo'shish</h2>
+        <button class="modal-close" onclick="closeSaleModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="saleModalProductInfo" style="margin-bottom:1rem; font-weight:600;"></p>
+        <div class="form-group">
+          <label>Soni</label>
+          <input type="number" id="saleQty" value="1" min="1">
+        </div>
+        <p id="saleModalStock" style="font-size:0.82rem; color:var(--text-secondary);"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeSaleModal()">Bekor qilish</button>
+        <button class="btn btn-success" onclick="addToCartConfirm()">🛒 Qo'shish</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
