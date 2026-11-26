@@ -26,6 +26,6 @@
 - 4-hafta: Tizimni sinovdan o'tkazish, GitHub Pages'ga joylash va namoyish etish.
 
 ## 5. GitHub Issues (Vazifalar)
-- #1 Login sahifasi
-- #2 Mahsulotlar va ombor boshqaruvi
-- #3 Sotuvlar va hisobotlar bo'limi
+- [#1 Login sahifasi](https://github.com)
+- [#2 Mahsulotlar va ombor boshqaruvi](https://github.com)
+- [#3 Sotuvlar va hisobotlar bo'limi](https://github.com)
