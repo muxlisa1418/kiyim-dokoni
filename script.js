@@ -641,25 +641,6 @@ function showToast(message, type = 'info') {
     setTimeout(() => toast.remove(), 300);
   }, 3000);
 }
-function toggleDashboardProducts() {
-  const listDiv = document.getElementById("dashboardProductsList");
-  if (listDiv.style.display === "none") {
-    const items = (typeof products !== "undefined" ? products : JSON.parse(localStorage.getItem("products"))) || [];
-    if (items.length === 0) {
-      listDiv.innerHTML = "<p style='font-size: 0.85rem; color: gray;'>Mahsulotlar topilmadi</p>";
-    } else {
-      listDiv.innerHTML = items.map((p, index) => 
-        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #eee; font-size: 0.85rem;">
-          <span><b>${index + 1}.</b> ${p.name} (${p.size} / ${p.color})</span>
-          <span style="font-weight: 600; color: #6c5ce7;">${p.stock} dona</span>
-        </div>
-      ).join("");
-    }
-    listDiv.style.display = "block";
-  } else {
-    listDiv.style.display = "none";
-  }
-}
 
 // ===================== INIT =====================
 
